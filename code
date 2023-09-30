@@ -1,0 +1,151 @@
+namespace dzkurs
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Book book = new Book(null, null, null);
+            bool isWorking = true;
+            string addBookCommand = "1";
+            string deleteBookCommand = "2";
+            string showBookByNameCommand = "3";
+            string showAllBooksCommand = "4";
+            string exitCommand = "5";
+            string command;
+
+            while (isWorking)
+            {
+                Console.WriteLine("Введите команду");
+                Console.WriteLine($"Добавить книгу - 1");
+                Console.WriteLine($"Удалить книгу - 2");
+                Console.WriteLine($"Найти книгу по названию - 3");
+                Console.WriteLine($"Показать все книги - 4");
+
+                command = Console.ReadLine();
+
+                if (command == addBookCommand)
+                {
+                    book.AddNewBook();
+                }
+                else if (command == deleteBookCommand)
+                {
+                    book.RemoveBook();
+                }
+                else if (command == showBookByNameCommand)
+                {
+                    book.showBookByName();
+                }
+                else if (command == showAllBooksCommand)
+                {
+                    book.ShowAllBooks();
+                }
+                else if(command == exitCommand)
+                {
+                    isWorking = false;
+                }
+                else
+                {
+                    Console.WriteLine("Неизвестная команда");
+                }
+            }
+        }
+    }
+
+    class Book
+    {
+        public string Author { get; private set; }
+        public string Name { get; private set; }
+        public string ReleaseYear { get; private set; }
+
+        public Book(string author, string name, string releaseYear)
+        {
+            Name = name;
+            Author = author;
+            ReleaseYear = releaseYear;
+        }
+
+        List<Book> Books = new List<Book>();
+
+
+        public List<Book> AddNewBook()
+        {
+            Book book = new Book(null, null, null);
+
+            string userInput;
+
+            Console.WriteLine("Введите название книги");
+
+            userInput = Console.ReadLine();
+            book.Name = userInput;
+
+            Console.WriteLine("Введите автора");
+
+            userInput= Console.ReadLine();
+            book.Author = userInput;
+
+            Console.WriteLine("И год выпуска");
+
+            userInput = Console.ReadLine();
+            book.ReleaseYear = userInput;
+
+            Books.Add(book);
+
+            Console.WriteLine($"Игрок {book.Name} добавлен");
+
+            return Books;
+        }     
+
+        public void ShowAllBooks()
+        {
+            for (int i = 0; i < Books.Count; i++)
+            {
+                Books[i].ShowInfoAboutBook(Books[i].Name, Books[i].Author, Books[i].ReleaseYear);
+            }
+        }
+
+        public void ShowInfoAboutBook(string name, string author, string releaseYear)
+        {
+            Console.WriteLine("Название книги " + name);
+            Console.WriteLine("Автор книги " + author);
+            Console.WriteLine("Год выпуска " + releaseYear);
+        }
+
+        public List<Book> RemoveBook()
+        {
+            string userInput;
+
+            Console.WriteLine("Введите название книги");
+            userInput = Console.ReadLine();
+
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Convert.ToString(Books[i].Name) == userInput)
+                {
+                    Console.WriteLine($"Книга {Books[i].Name} удалена!");
+                    Books.Remove(Books[i]);
+                }
+            }
+
+            return Books;
+        }
+
+        public List<Book> showBookByName()
+        {
+            string userInput;
+
+
+            Console.WriteLine("Введите название книги");
+            userInput= Console.ReadLine();
+
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].Name == userInput)
+                {
+                    Console.WriteLine($"{Books[i].Name}, {Books[i].Author}, {Books[i].ReleaseYear}");
+                }
+            }
+
+            return Books;
+        }
+    }
+}
