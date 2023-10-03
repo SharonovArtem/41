@@ -1,10 +1,16 @@
+using System;
+using System.Text.RegularExpressions;
+
+
+
 namespace dzkurs
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Book book = new Book(null, null, null);
+            Library library = new Library();
+            Book book = new Book(null, null, null, 0);
             bool isWorking = true;
             string addBookCommand = "1";
             string deleteBookCommand = "2";
@@ -25,21 +31,21 @@ namespace dzkurs
 
                 if (command == addBookCommand)
                 {
-                    book.AddNewBook();
+                    library.AddNewBook();
                 }
                 else if (command == deleteBookCommand)
                 {
-                    book.RemoveBook();
+                    library.RemoveBook();
                 }
                 else if (command == showBookByNameCommand)
                 {
-                    book.showBookByName();
+                    library.showBookByName();
                 }
                 else if (command == showAllBooksCommand)
                 {
-                    book.ShowAllBooks();
+                    library.ShowAllBooks();
                 }
-                else if(command == exitCommand)
+                else if (command == exitCommand)
                 {
                     isWorking = false;
                 }
@@ -56,70 +62,76 @@ namespace dzkurs
         public string Author { get; private set; }
         public string Name { get; private set; }
         public string ReleaseYear { get; private set; }
+        public int Number { get; private set; }
 
-        public Book(string author, string name, string releaseYear)
+        public Book(string author, string name, string releaseYear, int number)
         {
             Name = name;
             Author = author;
             ReleaseYear = releaseYear;
+            Number = number;
         }
 
-        List<Book> Books = new List<Book>();
+        public void ShowInfo(string name, string author, string releaseYear)
+        {
+            Console.WriteLine("Название книги " + name);
+            Console.WriteLine("Автор книги " + author);
+            Console.WriteLine("Год выпуска " + releaseYear);
+        }
+    }
 
+    class Library
+    {
+        public List<Book> Books { get; private set; } = new List<Book>();
 
         public List<Book> AddNewBook()
         {
-            Book book = new Book(null, null, null);
-
-            string userInput;
+            int numberOfBookInList = 0;
+            string userInputName;
+            string userInputAuthor;
+            string userInputReleaseYear;
 
             Console.WriteLine("Введите название книги");
 
-            userInput = Console.ReadLine();
-            book.Name = userInput;
+            userInputName = Console.ReadLine();
 
             Console.WriteLine("Введите автора");
 
-            userInput= Console.ReadLine();
-            book.Author = userInput;
+            userInputAuthor = Console.ReadLine();
 
             Console.WriteLine("И год выпуска");
 
-            userInput = Console.ReadLine();
-            book.ReleaseYear = userInput;
+            userInputReleaseYear = Console.ReadLine();
+
+            Book book = new Book(userInputAuthor, userInputName, userInputReleaseYear, numberOfBookInList);
 
             Books.Add(book);
 
-            Console.WriteLine($"Игрок {book.Name} добавлен");
+            Console.WriteLine($"Книга {book.Name} добавлена");
+
+            numberOfBookInList++;
 
             return Books;
-        }     
+        }
 
         public void ShowAllBooks()
         {
             for (int i = 0; i < Books.Count; i++)
             {
-                Books[i].ShowInfoAboutBook(Books[i].Name, Books[i].Author, Books[i].ReleaseYear);
+                Books[i].ShowInfo(Books[i].Name, Books[i].Author, Books[i].ReleaseYear);
             }
-        }
-
-        public void ShowInfoAboutBook(string name, string author, string releaseYear)
-        {
-            Console.WriteLine("Название книги " + name);
-            Console.WriteLine("Автор книги " + author);
-            Console.WriteLine("Год выпуска " + releaseYear);
         }
 
         public List<Book> RemoveBook()
         {
             string userInput;
 
-            Console.WriteLine("Введите название книги");
+            Console.WriteLine("Введите номер книги");
             userInput = Console.ReadLine();
 
             for (int i = 0; i < Books.Count; i++)
             {
-                if (Convert.ToString(Books[i].Name) == userInput)
+                if (Convert.ToString(Books[i].Number) == userInput)
                 {
                     Console.WriteLine($"Книга {Books[i].Name} удалена!");
                     Books.Remove(Books[i]);
@@ -129,23 +141,20 @@ namespace dzkurs
             return Books;
         }
 
-        public List<Book> showBookByName()
+        public void showBookByName()
         {
             string userInput;
 
-
             Console.WriteLine("Введите название книги");
-            userInput= Console.ReadLine();
+            userInput = Console.ReadLine();
 
             for (int i = 0; i < Books.Count; i++)
             {
-                if (Books[i].Name == userInput)
+                if (Regex.IsMatch(Books[i].Name, userInput))
                 {
                     Console.WriteLine($"{Books[i].Name}, {Books[i].Author}, {Books[i].ReleaseYear}");
                 }
             }
-
-            return Books;
         }
     }
 }
