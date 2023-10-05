@@ -1,8 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
 
-
-
 namespace dzkurs
 {
     internal class Program
@@ -13,18 +11,23 @@ namespace dzkurs
             bool isWorking = true;
             string addBookCommand = "1";
             string deleteBookCommand = "2";
-            string findBookCommand = "3";
-            string showAllBooksCommand = "4";
-            string exitCommand = "5";
+            string findBookByNameCommand = "3";
+            string findBookByAuthorCommand = "4";
+            string findBookByReleaseYearCommand = "5";
+            string showAllBooksCommand = "6";
+            string exitCommand = "7";
             string command;
 
             while (isWorking)
             {
                 Console.WriteLine("Введите команду");
-                Console.WriteLine($"Добавить книгу - " + addBookCommand);
-                Console.WriteLine($"Удалить книгу - " + deleteBookCommand);
-                Console.WriteLine($"Найти книгу - " + findBookCommand);
-                Console.WriteLine($"Показать все книги - " + exitCommand);
+                Console.WriteLine("Добавить книгу - " + addBookCommand);
+                Console.WriteLine("Удалить книгу - " + deleteBookCommand);
+                Console.WriteLine("Найти книгу по имени - " + findBookByNameCommand);
+                Console.WriteLine("Найти книгу по автору - " + findBookByAuthorCommand);
+                Console.WriteLine("Найти книгу по году выпуска - " + findBookByReleaseYearCommand);
+                Console.WriteLine("Показать все книги - " + showAllBooksCommand);
+                Console.WriteLine("Выйти" + exitCommand);
 
                 command = Console.ReadLine();
 
@@ -36,9 +39,17 @@ namespace dzkurs
                 {
                     library.RemoveBook();
                 }
-                else if (command == findBookCommand)
+                else if (command == findBookByNameCommand)
                 {
-                    library.FindBook();
+                    library.FindBookByName();
+                }
+                else if(command == findBookByAuthorCommand)
+                {
+                    library.FindBookByAuthor();
+                }
+                else if(command == findBookByReleaseYearCommand)
+                {
+                    library.FindBookByReleaseYear();
                 }
                 else if (command == showAllBooksCommand)
                 {
@@ -58,11 +69,6 @@ namespace dzkurs
 
     class Book
     {
-        public string Author { get; private set; }
-        public string Name { get; private set; }
-        public string ReleaseYear { get; private set; }
-        public int Number { get; private set; }
-
         public Book(string author, string name, string releaseYear, int number)
         {
             Name = name;
@@ -70,6 +76,11 @@ namespace dzkurs
             ReleaseYear = releaseYear;
             Number = number;
         }
+
+        public string Author { get; private set; }
+        public string Name { get; private set; }
+        public string ReleaseYear { get; private set; }
+        public int Number { get; private set; }
 
         public void ShowInfo()
         {
@@ -121,38 +132,93 @@ namespace dzkurs
 
         public void RemoveBook()
         {
-            int userInput;
+            string userInput;
+            int value;
 
             Console.WriteLine("Введите номер книги");
-            userInput = Convert.ToInt32(Console.ReadLine());
+            userInput = Console.ReadLine();
 
-
-            for (int i = 0; i < _books.Count; i++)
+            if(int.TryParse(userInput, out value))
             {
-                if (_books[i].Number == userInput)
+                for (int i = 0; i < _books.Count; i++)
                 {
-                    Console.WriteLine($"Книга {_books[i].Name} удалена!");
-                    _books.Remove(_books[i]);
+                    if (_books[i].Number == value)
+                    {
+                        Console.WriteLine($"Книга {_books[i].Name} удалена!");
+                        _books.Remove(_books[i]);
+                    }
                 }
+            }
+            else
+            {
+                Console.WriteLine("Ошибка ввода");
             }
         }
 
-        public void FindBook()
+        public void FindBookByName()
         {
             string userInput;
             string wantedBook = null;
 
-            Console.WriteLine("Введите название книги, автора или дату выпуска");
+            Console.WriteLine("Введите название книги");
             userInput = Console.ReadLine();
 
             for (int i = 0; i < _books.Count; i++)
             {
-                if (Regex.IsMatch(_books[i].Name, userInput) || Regex.IsMatch(_books[i].Author, userInput) || Regex.IsMatch(_books[i].ReleaseYear, userInput))
+                if (Regex.IsMatch(_books[i].Name.ToLower(), userInput.ToLower()))
                 {
                     Console.WriteLine($"{_books[i].Name}, {_books[i].Author}, {_books[i].ReleaseYear}");
 
                     wantedBook = _books[i].Name;
-                }                
+                }
+            }
+
+            if (wantedBook == null)
+            {
+                Console.WriteLine("Мы ничего не нашли:(");
+            }
+        }
+
+        public void FindBookByAuthor()
+        {
+            string userInput;
+            string wantedBook = null;
+
+            Console.WriteLine("Введите автора книги");
+            userInput = Console.ReadLine();
+
+            for (int i = 0; i < _books.Count; i++)
+            {
+                if (Regex.IsMatch(_books[i].Author.ToLower(), userInput.ToLower()))
+                {
+                    Console.WriteLine($"{_books[i].Name}, {_books[i].Author}, {_books[i].ReleaseYear}");
+
+                    wantedBook = _books[i].Name;
+                }
+            }
+
+            if (wantedBook == null)
+            {
+                Console.WriteLine("Мы ничего не нашли:(");
+            }
+        }
+
+        public void FindBookByReleaseYear()
+        {
+            string userInput;
+            string wantedBook = null;
+
+            Console.WriteLine("Введите год выпуска книги");
+            userInput = Console.ReadLine();
+
+            for (int i = 0; i < _books.Count; i++)
+            {
+                if (Regex.IsMatch(_books[i].ReleaseYear, userInput))
+                {
+                    Console.WriteLine($"{_books[i].Name}, {_books[i].Author}, {_books[i].ReleaseYear}");
+
+                    wantedBook = _books[i].Name;
+                }
             }
 
             if (wantedBook == null)
